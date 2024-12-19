@@ -1,42 +1,24 @@
 (function ($) {
     "use strict";
-
-    // Spinner
-    var spinner = function () {
+    
+    // loader
+    var loader = function () {
         setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
+            if ($('#loader').length > 0) {
+                $('#loader').removeClass('show');
             }
         }, 1);
     };
-    spinner();
+    loader();
     
     
     // Initiate the wowjs
     new WOW().init();
-
-
-    // Fixed Navbar
-    $(window).scroll(function () {
-        if ($(window).width() < 992) {
-            if ($(this).scrollTop() > 45) {
-                $('.fixed-top').addClass('bg-white shadow');
-            } else {
-                $('.fixed-top').removeClass('bg-white shadow');
-            }
-        } else {
-            if ($(this).scrollTop() > 45) {
-                $('.fixed-top').addClass('bg-white shadow').css('top', -45);
-            } else {
-                $('.fixed-top').removeClass('bg-white shadow').css('top', 0);
-            }
-        }
-    });
     
     
     // Back to top button
     $(window).scroll(function () {
-        if ($(this).scrollTop() > 300) {
+        if ($(this).scrollTop() > 200) {
             $('.back-to-top').fadeIn('slow');
         } else {
             $('.back-to-top').fadeOut('slow');
@@ -46,34 +28,82 @@
         $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
         return false;
     });
-
-
-    // Testimonials carousel
-    $(".testimonial-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1000,
-        margin: 25,
-        loop: true,
-        center: true,
-        dots: false,
-        nav: true,
-        navText : [
-            '<i class="bi bi-chevron-left"></i>',
-            '<i class="bi bi-chevron-right"></i>'
-        ],
-        responsive: {
-            0:{
-                items:1
-            },
-            768:{
-                items:2
-            },
-            992:{
-                items:3
+    
+    
+    // Sticky Navbar
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 0) {
+            $('.navbar').addClass('nav-sticky');
+        } else {
+            $('.navbar').removeClass('nav-sticky');
+        }
+    });
+    
+    
+    // Smooth scrolling on the navbar links
+    $(".navbar-nav a").on('click', function (event) {
+        if (this.hash !== "") {
+            event.preventDefault();
+            
+            $('html, body').animate({
+                scrollTop: $(this.hash).offset().top - 45
+            }, 1500, 'easeInOutExpo');
+            
+            if ($(this).parents('.navbar-nav').length) {
+                $('.navbar-nav .active').removeClass('active');
+                $(this).closest('a').addClass('active');
             }
         }
     });
+    
+    
+    // Typed Initiate
+    if ($('.hero .hero-text h2').length == 1) {
+        var typed_strings = $('.hero .hero-text .typed-text').text();
+        var typed = new Typed('.hero .hero-text h2', {
+            strings: typed_strings.split(', '),
+            typeSpeed: 100,
+            backSpeed: 20,
+            smartBackspace: false,
+            loop: true
+        });
+    }
+    
+    
+    // Skills
+    $('.skills').waypoint(function () {
+        $('.progress .progress-bar').each(function () {
+            $(this).css("width", $(this).attr("aria-valuenow") + '%');
+        });
+    }, {offset: '80%'});
 
+
+    // Testimonials carousel
+    $(".testimonials-carousel").owlCarousel({
+        center: true,
+        autoplay: true,
+        dots: true,
+        loop: true,
+        responsive: {
+            0:{
+                items:1
+            }
+        }
+    });
+    
+    
+    
+    // Portfolio filter
+    var portfolioIsotope = $('.portfolio-container').isotope({
+        itemSelector: '.portfolio-item',
+        layoutMode: 'fitRows'
+    });
+
+    $('#portfolio-filter li').on('click', function () {
+        $("#portfolio-filter li").removeClass('filter-active');
+        $(this).addClass('filter-active');
+        portfolioIsotope.isotope({filter: $(this).data('filter')});
+    });
     
 })(jQuery);
 
